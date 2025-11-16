@@ -39,21 +39,46 @@ AudioTrack::~AudioTrack() {
     // Your code here...
 }
 
-AudioTrack::AudioTrack(const AudioTrack& other)
+AudioTrack::AudioTrack(const AudioTrack& other) : title(other.title), duration_seconds(other.duration_seconds), bpm(other.bpm), waveform_size(other.waveform_size)
 {
-    // TODO: Implement the copy constructor
+    if (other.waveform_data) { // check other.waveform_data is not NULL
+        waveform_data = new double[waveform_size];
+        for (size_t i = 0; i < waveform_size; ++i) {
+            waveform_data[i] = other.waveform_data[i];
+        }
+    } else {
+        waveform_data = nullptr;
+    }
+
     #ifdef DEBUG
     std::cout << "AudioTrack copy constructor called for: " << other.title << std::endl;
     #endif
-    // Your code here...
+
+    
 }
 
 AudioTrack& AudioTrack::operator=(const AudioTrack& other) {
     // TODO: Implement the copy assignment operator
+    
     #ifdef DEBUG
     std::cout << "AudioTrack copy assignment called for: " << other.title << std::endl;
     #endif
-    // Your code here...
+    if (this == &other) return *this;
+    title = other.title;
+    artists = other.artists;
+    duration_seconds = other.duration_seconds;
+    bpm = other.bpm;
+    waveform_size = other.waveform_size;
+    delete[] waveform_data;// deleting the data in order to prevent memory leak.
+    if (other.waveform_data) {
+        waveform_data = new double[waveform_size];
+        for (size_t i = 0; i < waveform_size; ++i) {
+            waveform_data[i] = other.waveform_data[i];
+        }
+    } else {
+        waveform_data = nullptr;
+    }
+
     return *this;
 }
 
