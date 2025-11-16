@@ -35,6 +35,7 @@ AudioTrack::~AudioTrack() {
     #ifdef DEBUG
     std::cout << "AudioTrack destructor called for: " << title << std::endl;
     #endif
+    delete[] waveform_data;
     // Your code here...
 }
 
