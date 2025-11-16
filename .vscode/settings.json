@@ -41,7 +41,8 @@
         "*.h": "cpp",
         "*.cpp": "cpp",
         "*.txt": "plaintext",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "new": "cpp"
     },
     
     // Editor settings for academic integrity
