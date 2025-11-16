@@ -5,7 +5,7 @@ WAVTrack::WAVTrack(const std::string& title, const std::vector<std::string>& art
                    int duration, int bpm, int sample_rate, int bit_depth)
     : AudioTrack(title, artists, duration, bpm), sample_rate(sample_rate), bit_depth(bit_depth) {
 
-    std::cout << "WAVTrack created: " << sample_rate << "Hz/" << bit_depth << "bit" << std::endl;
+    std::cout << "WAVTrack created: " << sample_rate << "Hz/" << bit_depth << " bit" << std::endl;
 }
 
 // ========== TODO: STUDENTS IMPLEMENT THESE VIRTUAL FUNCTIONS ==========
@@ -14,7 +14,7 @@ void WAVTrack::load() {
     std::cout << "[WAVTrack::load] Loading WAV: \"" << title
               << "\" at " << sample_rate <<"Hz "<< bit_depth<<"bit (uncompressed)...\n";
     long size = duration_seconds * sample_rate * (bit_depth / 8) * 2;
-    std::cout << "  → Estimated file size: \"" << size <<"\" bytes\n";
+    std::cout << "  → Estimated file size: "<< size <<" bytes\n";
     std::cout << "  → Fast loading due to uncompressed format.\n";
     // NOTE: Use exactly 2 spaces before the arrow (→) character
 
@@ -29,7 +29,7 @@ void WAVTrack::analyze_beatgrid() {
     long long beats = (duration_seconds / 60.0) * bpm;
 
     // 3. Print number of beats and mention uncompressed precision
-    std::cout<<"  → Estimated beats: \""<<beats <<"\"  → Precision factor: 1.0 (uncompressed audio)";
+    std::cout<<"  → Estimated beats: \""<<beats <<"\"  → Precision factor: 1.0 (uncompressed audio)\n";
     // should print "  → Estimated beats: <beats>  → Precision factor: 1.0 (uncompressed audio)"
 }
 

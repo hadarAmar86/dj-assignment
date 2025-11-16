@@ -20,7 +20,7 @@ void MP3Track::load() {
         std::cout << "  → No ID3 tags found.\n";
     }
      std::cout << "  → Decoding MP3 frames...\n";
-     std::cout << "  → Load complete.";
+     std::cout << "  → Load complete.\n";
 
     // TODO: Implement MP3 loading with format-specific operations
     // NOTE: Use exactly 2 spaces before the arrow (→) character
