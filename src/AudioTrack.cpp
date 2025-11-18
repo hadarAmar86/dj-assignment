@@ -36,7 +36,7 @@ AudioTrack::~AudioTrack() {
     std::cout << "AudioTrack destructor called for: " << title << std::endl;
     #endif
     delete[] waveform_data;
-    waveform_data = nullptr;
+    // waveform_data = nullptr;
     // Your code here...
 }
 
@@ -71,12 +71,13 @@ AudioTrack& AudioTrack::operator=(const AudioTrack& other) {
     return *this;
 }
 
-AudioTrack::AudioTrack(AudioTrack&& other) noexcept : title(std::move(other.title)), artists(std::move(other.artists)), duration_seconds(other.duration_seconds), bpm(other.bpm), waveform_size(other.waveform_size),waveform_data(other.waveform_data)
+AudioTrack::AudioTrack(AudioTrack&& other) noexcept : artists(std::move(other.artists)), duration_seconds(other.duration_seconds), bpm(other.bpm), waveform_size(other.waveform_size),waveform_data(other.waveform_data)
 {
     // TODO: Implement the move constructor
     #ifdef DEBUG
     std::cout << "AudioTrack move constructor called for: " << other.title << std::endl;
     #endif
+    title = std::move(other.title);
     other.waveform_data = nullptr;
     other.waveform_size = 0;
 }

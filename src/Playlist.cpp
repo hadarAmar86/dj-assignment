@@ -13,12 +13,13 @@ Playlist::~Playlist() {
     std::cout << "Destroying playlist: " << playlist_name << std::endl;
     #endif
     PlaylistNode* curr = head;
-    while (curr)
-    {
+    while (curr) {
         PlaylistNode* next = curr->next;
+        delete curr->track;
         delete curr;
         curr = next;
     }
+
     head = nullptr;
     track_count = 0;
 
@@ -40,6 +41,8 @@ void Playlist::add_track(AudioTrack* track) {
 
     std::cout << "Added '" << track->get_title() << "' to playlist '" 
               << playlist_name << "'" << std::endl;
+
+    delete new_node;
 }
 
 void Playlist::remove_track(const std::string& title) {
@@ -59,7 +62,8 @@ void Playlist::remove_track(const std::string& title) {
         } else {
             head = current->next;
         }
-
+        delete current->track;
+        delete current;
         track_count--;
         std::cout << "Removed '" << title << "' from playlist" << std::endl;
 
