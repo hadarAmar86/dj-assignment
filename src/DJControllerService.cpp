@@ -46,6 +46,5 @@ void DJControllerService::displayCacheStatus() const {
  * TODO: Implement getTrackFromCache method
  */
 AudioTrack* DJControllerService::getTrackFromCache(const std::string& track_title) {
-    // Your implementation here
-    return nullptr; // Placeholder
+    return cache.get(track_title);
 }
