@@ -74,7 +74,7 @@ public:
      * Don't forget about self-assignment!
      */
     PointerWrapper& operator=(PointerWrapper&& other) noexcept {
-        if (this != other)
+        if (this != &other)
         {
             delete ptr;
             ptr = other.ptr;
@@ -106,7 +106,7 @@ public:
     T* operator->() const {
        T* raw = get();
         if (!raw) {
-            throw std::runtime_error("Accessing the data through null PointerWrapper");
+            throw std::runtime_error("Accessing the data through null");
         }
         return raw;
     }
@@ -119,7 +119,7 @@ public:
      */
     T* get() const {
        if (ptr == nullptr) {
-        throw std::runtime_error("Accessing the data through null PointerWrapper");
+        throw std::runtime_error("Accessing the data through null");
         }
     return ptr; // Placeholder
     }
@@ -132,7 +132,9 @@ public:
      * Should the wrapper still own the pointer after calling release()?
      */
     T* release() {
-        return nullptr;
+        T* curr_ptr = ptr;
+        ptr = nullptr;
+        return curr_ptr;
     }
 
     /**
@@ -140,7 +142,13 @@ public:
      * HINT: How do you replace the currently wrapped pointer?
      * What should happen to the old pointer?
      */
-    void reset(T* new_ptr = nullptr) {
+    void reset(T* new_ptr = nullptr)
+    {
+        if (ptr != new_ptr)
+        {
+            delete ptr;
+            ptr = new_ptr;
+        }
     }
 
     // ========== UTILITY FUNCTIONS ==========
@@ -151,7 +159,7 @@ public:
      * Why might the explicit keyword be important here?
      */
     explicit operator bool() const {
-        return false; //placeholder
+        return ptr != nullptr;
     }
 
     /**
@@ -182,9 +190,7 @@ PointerWrapper<T> make_pointer_wrapper(Args&&... args) {
  */
 template<typename T>
 void swap(PointerWrapper<T>& lhs, PointerWrapper<T>& rhs) noexcept {
-    // TODO: Implement global swap function
-    // HINT: You can use the member swap function
-    //your code here...
+    lhs.swap(rhs);
 }
 
 #endif // POINTERWRAPPER_H
