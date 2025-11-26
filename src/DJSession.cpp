@@ -119,6 +119,7 @@ void DJSession::simulate_dj_performance() {
     else
     {
         std::string playlist_name = "";
+        int stats_track = 0;
         while (true)
         {
             playlist_name = display_playlist_menu_from_config();
@@ -126,17 +127,38 @@ void DJSession::simulate_dj_performance() {
             {
                 break;
             }
-        
             bool flag = load_playlist(playlist_name);
             if (!flag)
             {
                 std::cerr << "[ERROR] Failed to load playlist: " << playlist_name << std::endl;
                 continue;
-            }    
+            } 
+            for (const auto& track_title : track_titles){
+                 std::cout << "\n-- Processing: " << track_title << " --\n";
+                 stats.tracks_processed++;
+                 stats_track = load_track_to_controller(track_title);
+                 if(stats_track == 1){
+                    stats.cache_hits++;
+                 }
+                 else if(stats_track == 0){
+                    stats.cache_misses++;
+                 }
+                 if(stats_track == -1){
+                    stats.cache_evictions++;
+                 }
+                 bool loaded = load_track_to_mixer_deck(track_title);
+                 if(loaded){
+                    stats.transitions++;
+                 }
+                 else{
+                    continue;
+                 }
+            print_session_summary();
+            
+            }
         }
     }
 }
-
 
 /* 
  * Helper method to load session configuration from file
