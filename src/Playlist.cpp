@@ -6,8 +6,7 @@ Playlist::Playlist(const std::string& name)
     : head(nullptr), playlist_name(name), track_count(0) {
     std::cout << "Created playlist: " << name << std::endl;
 }
-// TODO: Fix memory leaks!
-// Students must fix this in Phase 1
+
 Playlist::~Playlist() {
     #ifdef DEBUG
     std::cout << "Destroying playlist: " << playlist_name << std::endl;
@@ -24,6 +23,29 @@ Playlist::~Playlist() {
     track_count = 0;
 
 }
+
+Playlist::Playlist(const Playlist& other)
+    : head(nullptr), playlist_name(other.get_name()), track_count(0)
+{
+    auto otherTracks = other.getTracks(); 
+    PlaylistNode* tail = nullptr;
+
+    for (auto trackPtr : otherTracks) {
+        AudioTrack* clonedTrack = trackPtr->clone().get();
+        PlaylistNode* newNode = new PlaylistNode(clonedTrack);
+
+        if (!head) {
+            head = newNode;
+            tail = head;
+        } else {
+            tail->next = newNode;
+            tail = newNode;
+        }
+
+        track_count++;
+    }
+}
+
 
 void Playlist::add_track(AudioTrack* track) {
     if (!track) {
@@ -42,7 +64,6 @@ void Playlist::add_track(AudioTrack* track) {
     std::cout << "Added '" << track->get_title() << "' to playlist '" 
               << playlist_name << "'" << std::endl;
 
-    delete new_node;
 }
 
 void Playlist::remove_track(const std::string& title) {
