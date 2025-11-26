@@ -72,7 +72,6 @@ int DJSession::load_track_to_controller(const std::string& track_name) {
     }
     std::cout << "[System] Loading track '" << track_name << "' to controller..." << std::endl;
     int flag = controller_service.loadTrackToCache(*found_track);
-    int flag = controller_service.loadTrackToCache(*found_track);
 
     switch (flag) {
         case 1:
