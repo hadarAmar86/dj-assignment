@@ -130,3 +130,4 @@ void MixingEngineService::sync_bpm(const PointerWrapper<AudioTrack>& track) cons
         track->set_bpm(average_bpm);
         std:: cout << "[Sync BPM] Syncing BPM from "<< original_bpm <<" to " << average_bpm << std::endl;
     }
+}
