@@ -15,7 +15,7 @@ int DJControllerService::loadTrackToCache(AudioTrack& track) {
         return 1;
     }
     PointerWrapper<AudioTrack> p_clone = track.clone();
-    AudioTrack* raw_clone = p_clone.get();
+    AudioTrack* raw_clone = p_clone.release();
     if (!p_clone)
     {
         std::cerr << "[ERROR] Track: \"" << curr_title << "\" failed to clone in loadTrackToCache()." << std::endl;
