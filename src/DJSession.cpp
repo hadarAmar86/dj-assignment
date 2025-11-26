@@ -167,79 +167,79 @@ void DJSession::simulate_dj_performance() {
 
         std::sort(tracks_name.begin(), tracks_name.end());
     }
-std::cout << "\n--- Processing Tracks ---" << std::endl;
+    std::cout << "\n--- Processing Tracks ---" << std::endl;
 
-size_t play_all_index = 0;
-std::vector<std::string> sorted_playlists;
-
-if (play_all) {
-    for (const auto& p : session_config.playlists)
-        sorted_playlists.push_back(p.first);
-
-    std::sort(sorted_playlists.begin(), sorted_playlists.end());
-}
-
-while (true)
-{
-    std::string playlist_name;
+    size_t play_all_index = 0;
+    std::vector<std::string> sorted_playlists;
 
     if (play_all) {
-        if (play_all_index >= sorted_playlists.size())
-            break;
-        playlist_name = sorted_playlists[play_all_index++];
-    }
-    else
-    {
-        playlist_name = display_playlist_menu_from_config();
-        if (playlist_name == "")
-            break;
+        for (const auto& p : session_config.playlists)
+            sorted_playlists.push_back(p.first);
+
+        std::sort(sorted_playlists.begin(), sorted_playlists.end());
     }
 
-    bool flag = load_playlist(playlist_name);
-    if (!flag)
+    while (true)
     {
-        std::cerr << "[ERROR] Failed to load playlist: " << playlist_name << std::endl;
-        continue;
-    } 
+        std::string playlist_name;
 
-    int stats_track = 0;
-
-    for (const auto& track_title : track_titles)
-    {
-        std::cout << "\n-- Processing: " << track_title << " --\n";
-        stats.tracks_processed++;
-
-        stats_track = load_track_to_controller(track_title);
-
-        switch (stats_track) {
-            case 1:
-                stats.cache_hits++;
+        if (play_all) {
+            if (play_all_index >= sorted_playlists.size())
                 break;
-            case 0:
-                stats.cache_misses++;
-                break;
-            case -1:
-                stats.cache_evictions++;
-                stats.cache_misses++; // MISS with eviction counts as miss too
-                break;
-            default:
-                std::cerr << "[ERROR] invalid return number from load_track_to_controller" << std::endl;
-                stats.errors++;
+            playlist_name = sorted_playlists[play_all_index++];
+        }
+        else
+        {
+            playlist_name = display_playlist_menu_from_config();
+            if (playlist_name == "")
                 break;
         }
 
-        bool loaded = load_track_to_mixer_deck(track_title);
-        if (loaded) {
-            stats.transitions++;
-        }
-        else {
-            stats.errors++;
+        bool flag = load_playlist(playlist_name);
+        if (!flag)
+        {
+            std::cerr << "[ERROR] Failed to load playlist: " << playlist_name << std::endl;
             continue;
-        }
-    }
+        } 
 
-    print_session_summary();
-    stats = SessionStats{};
+        int stats_track = 0;
+
+        for (const auto& track_title : track_titles)
+        {
+            std::cout << "\n-- Processing: " << track_title << " --\n";
+            stats.tracks_processed++;
+
+            stats_track = load_track_to_controller(track_title);
+
+            switch (stats_track) {
+                case 1:
+                    stats.cache_hits++;
+                    break;
+                case 0:
+                    stats.cache_misses++;
+                    break;
+                case -1:
+                    stats.cache_evictions++;
+                    stats.cache_misses++; // MISS with eviction counts as miss too
+                    break;
+                default:
+                    std::cerr << "[ERROR] invalid return number from load_track_to_controller" << std::endl;
+                    stats.errors++;
+                    break;
+            }
+
+            bool loaded = load_track_to_mixer_deck(track_title);
+            if (loaded) {
+                stats.transitions++;
+            }
+            else {
+                stats.errors++;
+                continue;
+            }
+        }
+
+        print_session_summary();
+        stats = SessionStats{};
     }
 
     std::cout << "Session cancelled by user or all playlists played." << std::endl;
