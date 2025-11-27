@@ -31,8 +31,8 @@ Playlist::Playlist(const Playlist& other)
     PlaylistNode* tail = nullptr;
 
     for (auto trackPtr : otherTracks) {
-        AudioTrack* clonedTrack = trackPtr->clone().get();
-        PlaylistNode* newNode = new PlaylistNode(clonedTrack);
+        PointerWrapper<AudioTrack> clonedTrack = trackPtr->clone();
+        PlaylistNode* newNode = new PlaylistNode(clonedTrack.release());
 
         if (!head) {
             head = newNode;
