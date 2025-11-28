@@ -66,6 +66,11 @@ public:
      */
     AudioTrack* find_track(const std::string& title) const;
 
+
+    Playlist& operator=(const Playlist& other);// our implementation.
+
+
+
     /**
      * Check if playlist is empty
      */
@@ -82,7 +87,4 @@ public:
     std::vector<AudioTrack*> getTracks() const;
 
 };
-
-
-
 #endif // PLAYLIST_H

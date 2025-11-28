@@ -80,6 +80,8 @@ int MixingEngineService::loadTrackToDeck(const AudioTrack& track) {
         return target_deck;
 }
 
+
+
 /**
  * @brief Display current deck status
  */
@@ -130,4 +132,82 @@ void MixingEngineService::sync_bpm(const PointerWrapper<AudioTrack>& track) cons
         track->set_bpm(average_bpm);
         std:: cout << "[Sync BPM] Syncing BPM from "<< original_bpm <<" to " << average_bpm << std::endl;
     }
+
+}
+MixingEngineService& MixingEngineService::operator=(const MixingEngineService& other) {// getting ivalue, creating deep copy
+    if (this == &other) {
+        return *this;
+    }
+    PointerWrapper<AudioTrack> clonedDecks[2];
+    try {
+        //cloning other
+        for (int i = 0; i < 2; ++i) {
+            if (other.decks[i]) {
+                PointerWrapper<AudioTrack> cloned = other.decks[i]->clone();
+                if (cloned) {
+                    clonedDecks[i] = std::move(cloned);
+                } else {
+                    std::cerr << "[ERROR] Failed to clone deck " << i << " in copy assignment\n";
+                }
+            }
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "[ERROR] Exception during copy assignment clone: " << e.what() << "\n";
+        return *this;
+    }
+
+    //deleting this
+    for (int i = 0; i < 2; ++i) {
+        if (decks[i]) {
+            delete decks[i];
+            decks[i] = nullptr;
+        }
+    }
+
+    //other fields
+    active_deck   = other.active_deck;
+    auto_sync     = other.auto_sync;
+    bpm_tolerance = other.bpm_tolerance;
+
+    // moving the cloned other to this
+    for (int i = 0; i < 2; ++i) {
+        if (clonedDecks[i]) {
+            decks[i] = clonedDecks[i].release(); 
+        } else {
+            decks[i] = nullptr;
+        }
+    }
+    return *this;
+}
+
+MixingEngineService& MixingEngineService::operator=(MixingEngineService&& other) noexcept {// getting rvalue, move assignment, moving resources
+    if (this == &other) {
+        return *this;
+    }
+
+    //deleting this
+    for (int i = 0; i < 2; ++i) {
+        if (decks[i]) {
+            delete decks[i];
+            decks[i] = nullptr;
+        }
+    }
+
+    //other fields
+    active_deck   = other.active_deck;
+    auto_sync     = other.auto_sync;
+    bpm_tolerance = other.bpm_tolerance;
+
+    // moving the decks
+    for (int i = 0; i < 2; ++i) {
+        decks[i]       = other.decks[i];
+        other.decks[i] = nullptr;
+    }
+
+    // reseting other
+    other.active_deck   = 0;
+    other.auto_sync     = false;
+    other.bpm_tolerance = 0;
+
+    return *this;
 }

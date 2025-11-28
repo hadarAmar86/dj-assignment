@@ -161,3 +161,43 @@ std::vector<AudioTrack*> Playlist::getTracks() const {
     }
     return tracks;
 }
+
+Playlist& Playlist::operator=(const Playlist& other) {
+    if (this == &other) {
+        return *this; 
+    }
+
+    //cleaning this
+    PlaylistNode* current = head;
+    while (current) {
+        PlaylistNode* next = current->next;
+        delete current->track;
+        delete current;
+        current = next;
+    }
+    head = nullptr;
+    track_count = 0;
+
+    // coping and cloning other
+    playlist_name = other.playlist_name;
+    PlaylistNode* tail = nullptr;
+    for (AudioTrack* t : other.getTracks()) {
+        PointerWrapper<AudioTrack> cloned = t->clone();
+        if (!cloned) {
+            std::cerr << "[ERROR] Failed to clone track in operator=\n";
+            continue;
+        }
+        //creating new this
+        PlaylistNode* newNode = new PlaylistNode(cloned.release());
+
+        if (!head) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail->next = newNode;
+            tail = newNode;
+        }
+        ++track_count;
+    }
+    return *this;
+}
