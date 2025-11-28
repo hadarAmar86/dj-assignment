@@ -59,11 +59,10 @@ public:
     void set_bpm_tolerance(int tolerance) {
         bpm_tolerance = tolerance;
     }
-    /**
-     * TODO: Implement move assignment operator
-     * HINT: Clean up current data, steal from other, reset other
-     */
+     MixingEngineService(const MixingEngineService& other);
     MixingEngineService& operator=(const MixingEngineService& other);
+    
+    MixingEngineService(MixingEngineService&& other) noexcept;
     MixingEngineService& operator=(MixingEngineService&& other) noexcept;
 };
 

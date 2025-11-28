@@ -134,13 +134,15 @@ void MixingEngineService::sync_bpm(const PointerWrapper<AudioTrack>& track) cons
     }
 
 }
-MixingEngineService& MixingEngineService::operator=(const MixingEngineService& other) {// getting ivalue, creating deep copy
+MixingEngineService& MixingEngineService::operator=(const MixingEngineService& other) {
     if (this == &other) {
         return *this;
     }
+
     PointerWrapper<AudioTrack> clonedDecks[2];
+
     try {
-        //cloning other
+        // Clone decks from other
         for (int i = 0; i < 2; ++i) {
             if (other.decks[i]) {
                 PointerWrapper<AudioTrack> cloned = other.decks[i]->clone();
@@ -156,7 +158,7 @@ MixingEngineService& MixingEngineService::operator=(const MixingEngineService& o
         return *this;
     }
 
-    //deleting this
+    // Delete current decks
     for (int i = 0; i < 2; ++i) {
         if (decks[i]) {
             delete decks[i];
@@ -164,28 +166,48 @@ MixingEngineService& MixingEngineService::operator=(const MixingEngineService& o
         }
     }
 
-    //other fields
+    // Copy simple fields
     active_deck   = other.active_deck;
     auto_sync     = other.auto_sync;
     bpm_tolerance = other.bpm_tolerance;
 
-    // moving the cloned other to this
+    // Move cloned decks into this
     for (int i = 0; i < 2; ++i) {
         if (clonedDecks[i]) {
-            decks[i] = clonedDecks[i].release(); 
+            decks[i] = clonedDecks[i].release();
         } else {
             decks[i] = nullptr;
         }
     }
+
     return *this;
 }
 
-MixingEngineService& MixingEngineService::operator=(MixingEngineService&& other) noexcept {// getting rvalue, move assignment, moving resources
+/**
+ * Move constructor
+ */
+MixingEngineService::MixingEngineService(MixingEngineService&& other) noexcept
+    : decks{other.decks[0], other.decks[1]},
+      active_deck(other.active_deck),
+      auto_sync(other.auto_sync),
+      bpm_tolerance(other.bpm_tolerance)
+{
+    other.decks[0] = nullptr;
+    other.decks[1] = nullptr;
+    other.active_deck = 0;
+    other.auto_sync = false;
+    other.bpm_tolerance = 0;
+}
+
+/**
+ * Move assignment
+ */
+MixingEngineService& MixingEngineService::operator=(MixingEngineService&& other) noexcept {
     if (this == &other) {
         return *this;
     }
 
-    //deleting this
+    // Delete current decks
     for (int i = 0; i < 2; ++i) {
         if (decks[i]) {
             delete decks[i];
@@ -193,18 +215,18 @@ MixingEngineService& MixingEngineService::operator=(MixingEngineService&& other)
         }
     }
 
-    //other fields
+    // Move simple fields
     active_deck   = other.active_deck;
     auto_sync     = other.auto_sync;
     bpm_tolerance = other.bpm_tolerance;
 
-    // moving the decks
+    // Move decks
     for (int i = 0; i < 2; ++i) {
         decks[i]       = other.decks[i];
         other.decks[i] = nullptr;
     }
 
-    // reseting other
+    // Reset other
     other.active_deck   = 0;
     other.auto_sync     = false;
     other.bpm_tolerance = 0;
