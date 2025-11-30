@@ -15,7 +15,7 @@ MP3Track::MP3Track(const std::string& title, const std::vector<std::string>& art
 void MP3Track::load() {
      std::cout << "[MP3Track::load] Loading MP3: \"" << title<< "\" at " << bitrate << " kbps...\n";
     if (has_id3_tags) {
-        std::cout << "  → Processing ID3 metadata (artist info, album art, etc.)\n";
+        std::cout << "  → Processing ID3 metadata (artist info, album art, etc.)...\n";
     } else {
         std::cout << "  → No ID3 tags found.\n";
     }
@@ -31,7 +31,7 @@ void MP3Track::analyze_beatgrid() {
      std::cout << "[MP3Track::analyze_beatgrid] Analyzing beat grid for: \"" << title << "\"\n";
      long long beats = (duration_seconds / 60.0) * bpm;
      double precision_factor = bitrate / 320.0;
-     std::cout << "  → Estimated beats: " << beats << " → Compression precision factor: " << precision_factor << "\n";
+     std::cout << "  → Estimated beats: " << beats << "  → Compression precision factor: " << precision_factor << "\n";
     // TODO: Implement MP3-specific beat detection analysis
     // NOTE: Use exactly 2 spaces before each arrow (→) character
 
