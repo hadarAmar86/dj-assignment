@@ -10,7 +10,7 @@ MixingEngineService::MixingEngineService() : decks(), active_deck(1), auto_sync(
 {
     decks[0] = nullptr;
     decks[1] = nullptr;
-    std::cout << "[MixingEngineService] Initialized with 2 empty decks\n";
+    std::cout << "[MixingEngineService] Initialized with 2 empty decks.\n";
 }
 
 /**

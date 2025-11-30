@@ -215,7 +215,7 @@ void DJSession::simulate_dj_performance() {
 
         for (const auto& track_title : track_titles)
         {
-            std::cout << "\n-- Processing: " << track_title << " --\n";
+            std::cout << "\n--- Processing: " << track_title << " ---\n";
             stats.tracks_processed++;
 
             stats_track = load_track_to_controller(track_title);
@@ -245,6 +245,8 @@ void DJSession::simulate_dj_performance() {
                 stats.errors++;
                 continue;
             }
+            mixing_service.displayDeckStatus();
+            controller_service.displayCacheStatus();
         }
 
         print_session_summary();
