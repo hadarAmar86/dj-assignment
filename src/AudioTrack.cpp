@@ -131,6 +131,6 @@ void AudioTrack::set_bpm(int other_bpm)
 {
     if (other_bpm < 0)
     {
-        std::cout << "Cant set negative bpm" << std::endl;
+        std::cout << "[ERROR] Cant set negative bpm" << std::endl;
     }
 }

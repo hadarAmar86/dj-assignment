@@ -49,7 +49,7 @@ Playlist::Playlist(const Playlist& other)
 
 void Playlist::add_track(AudioTrack* track) {
     if (!track) {
-        std::cout << "[Error] Cannot add null track to playlist" << std::endl;
+        std::cout << "[ERROR] Cannot add null track to playlist" << std::endl;
         return;
     }
 
