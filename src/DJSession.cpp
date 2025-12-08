@@ -47,6 +47,8 @@ bool DJSession::load_playlist(const std::string& playlist_name)  {
     }
     
     track_titles = library_service.getTrackTitles();
+    std::reverse(track_titles.begin(), track_titles.end());
+
     return true;
 }
 
@@ -78,7 +80,7 @@ int DJSession::load_track_to_controller(const std::string& track_name) {
     {
         std::cerr << "[ERROR] Track: \"" << track_name << "\" not found in library" << std::endl;
         stats.errors++;
-        return 0;
+        return -1;
     }
     std::cout << "[System] Loading track '" << track_name << "' to controller..." << std::endl;
     int flag = controller_service.loadTrackToCache(*found_track);
@@ -211,46 +213,46 @@ void DJSession::simulate_dj_performance() {
             continue;
         } 
 
-        int stats_track = 0;
+        // int stats_track = 0;
 
-        for (const auto& track_title : track_titles)
+        for (const std::string& track_title : track_titles)
         {
             std::cout << "\n--- Processing: " << track_title << " ---\n";
             stats.tracks_processed++;
 
-            stats_track = load_track_to_controller(track_title);
-
-            switch (stats_track) {
-                case 1:
-                    stats.cache_hits++;
-                    break;
-                case 0:
-                    stats.cache_misses++;
-                    break;
-                case -1:
-                    stats.cache_evictions++;
-                    stats.cache_misses++; // MISS with eviction counts as miss too
-                    break;
-                default:
-                    std::cerr << "[ERROR] invalid return number from load_track_to_controller" << std::endl;
-                    stats.errors++;
-                    break;
-            }
-
-            bool loaded = load_track_to_mixer_deck(track_title);
-            if (loaded) {
-                stats.transitions++;
-            }
-            else {
-                stats.errors++;
-                continue;
-            }
-            mixing_service.displayDeckStatus();
+            load_track_to_controller(track_title);
             controller_service.displayCacheStatus();
+            load_track_to_mixer_deck(track_title);
+            mixing_service.displayDeckStatus();
+
+            // switch (stats_track) {
+            //     case 1:
+            //         stats.cache_hits++;
+            //         break;
+            //     case 0:
+            //         stats.cache_misses++;
+            //         break;
+            //     case -1:
+            //         stats.cache_evictions++;
+            //         stats.cache_misses++; // MISS with eviction counts as miss too
+            //         break;
+            //     default:
+            //         std::cerr << "[ERROR] invalid return number from load_track_to_controller" << std::endl;
+            //         stats.errors++;
+            //         break;
+            // }
+
+            // if (loaded) {
+            //     stats.transitions++;
+            // }
+            // else {
+            //     stats.errors++;
+            //     continue;
+            // }
         }
 
         print_session_summary();
-        stats = SessionStats{};
+        // stats = SessionStats{};
     }
 
     std::cout << "Session cancelled by user or all playlists played." << std::endl;

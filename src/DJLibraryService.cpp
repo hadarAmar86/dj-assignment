@@ -31,7 +31,7 @@ DJLibraryService::~DJLibraryService() {
             MP3Track* new_mp3_track = new MP3Track(track.title,track.artists,track.duration_seconds,
                                                 track.bpm,track.extra_param1,track.extra_param2);
             library.push_back(new_mp3_track);
-            std::cout << "MP3: MP3Track created: " << new_mp3_track->get_bitrate() << " kbps" << std::endl;
+            //std::cout << "MP3: MP3Track created: " << new_mp3_track->get_bitrate() << " kbps" << std::endl;
             count+=1;
         }
         else
@@ -41,7 +41,7 @@ DJLibraryService::~DJLibraryService() {
                 WAVTrack* new_wav_track = new WAVTrack(track.title,track.artists,track.duration_seconds,
                                                 track.bpm,track.extra_param1,track.extra_param2);
                 library.push_back(new_wav_track);
-                std::cout << "WAV: WAVTrack created: " << new_wav_track->get_sample_rate() << "Hz/" << new_wav_track->get_bit_depth() << std::endl;
+                //std::cout << "WAV: WAVTrack created: " << new_wav_track->get_sample_rate() << "Hz/" << new_wav_track->get_bit_depth() << std::endl;
                 count+=1;
             }
         }
