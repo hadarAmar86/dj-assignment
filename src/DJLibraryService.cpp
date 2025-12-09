@@ -14,7 +14,8 @@ DJLibraryService::DJLibraryService(const Playlist& playlist)
  * @param playlist_name Name of the playlist
  * @param track_indices Vector of 1-based track indices referencing the library
  */
-
+//owner of: AudioTrack objects
+//destractor
 DJLibraryService::~DJLibraryService() {
     for (AudioTrack* track : library) {
         delete track;

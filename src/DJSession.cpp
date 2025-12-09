@@ -29,6 +29,7 @@ DJSession::~DJSession() {
 }
 
 // ========== CORE FUNCTIONALITY ==========
+//looking for a playlist in the config file, creating a new one using DJLibraryService, saving the track titles of the session.
 bool DJSession::load_playlist(const std::string& playlist_name)  {
     std::cout << "[System] Loading playlist: " << playlist_name << "\n";
     
@@ -45,7 +46,7 @@ bool DJSession::load_playlist(const std::string& playlist_name)  {
     if (library_service.getPlaylist().is_empty()) {
         return false;
     }
-    
+    //saving the titles
     track_titles = library_service.getTrackTitles();
     std::reverse(track_titles.begin(), track_titles.end());
 
@@ -74,6 +75,7 @@ bool DJSession::load_playlist(const std::string& playlist_name)  {
  * @return: Cache operation result code
 
  */
+//load the track to cache through the controller
 int DJSession::load_track_to_controller(const std::string& track_name) {
     AudioTrack* found_track = library_service.findTrack(track_name);
     if (!found_track)
@@ -111,7 +113,7 @@ int DJSession::load_track_to_controller(const std::string& track_name) {
  * @param track_title: Title of track to load to mixer
  * @return: Whether track was successfully loaded to a deck
  */
-
+//getting a track from the cache if exists, and giving it to mixer engine (deck)
 bool DJSession::load_track_to_mixer_deck(const std::string& track_title) {
     std::cout << "[System] Delegating track transfer to MixingEngineService for: " << track_title << std::endl;
     AudioTrack* track = controller_service.getTrackFromCache(track_title); 
@@ -163,11 +165,17 @@ void DJSession::simulate_dj_performance() {
         std::cerr << "[ERROR] No playlists found in configuration. Aborting session." << std::endl;
         return;
     }
+    ////printing the sessions settings
     std::cout << "\nStarting DJ performance simulation..." << std::endl;
     std::cout << "BPM Tolerance: " << session_config.bpm_tolerance << " BPM" << std::endl;
     std::cout << "Auto Sync: " << (session_config.auto_sync ? "enabled" : "disabled") << std::endl;
     std::cout << "Cache Capacity: " << session_config.controller_cache_size << " slots (LRU policy)" << std::endl;
     std::cout << "\n--- Processing Tracks ---" << std::endl;
+
+
+
+
+    //creating a new playlist of all the songs //HADAR - TODO CHECK
     if (play_all)
     {
         std::vector<std::string> tracks_name;
@@ -178,6 +186,9 @@ void DJSession::simulate_dj_performance() {
 
         std::sort(tracks_name.begin(), tracks_name.end());
     }
+
+
+
     std::cout << "\n--- Processing Tracks ---" << std::endl;
 
     size_t play_all_index = 0;
@@ -189,7 +200,7 @@ void DJSession::simulate_dj_performance() {
 
         std::sort(sorted_playlists.begin(), sorted_playlists.end());
     }
-
+    //to go through each playlist and to play it
     while (true)
     {
         std::string playlist_name;
@@ -205,7 +216,7 @@ void DJSession::simulate_dj_performance() {
             if (playlist_name == "")
                 break;
         }
-
+        //loading the chosen playlist
         bool flag = load_playlist(playlist_name);
         if (!flag)
         {
@@ -214,7 +225,7 @@ void DJSession::simulate_dj_performance() {
         } 
 
         // int stats_track = 0;
-
+        //bringing the playlist to the controller and to the mixer
         for (const std::string& track_title : track_titles)
         {
             std::cout << "\n--- Processing: " << track_title << " ---\n";
@@ -263,7 +274,9 @@ void DJSession::simulate_dj_performance() {
  * 
  * @return: true if configuration loaded successfully; false on error
  */
+//reading the config file, updating mixing engine fields and the cache size in the controller
 bool DJSession::load_configuration() {
+    //load config file
     const std::string config_path = "bin/dj_config.txt";
     
     std::cout << "Loading configuration from: " << config_path << std::endl;

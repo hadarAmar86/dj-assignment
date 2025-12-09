@@ -36,7 +36,7 @@ AudioTrack::~AudioTrack() {
     delete[] waveform_data;
 }
 
-//
+//copy constrcator - deep copy
 AudioTrack::AudioTrack(const AudioTrack& other) : title(other.title),artists(other.artists),
       duration_seconds(other.duration_seconds), bpm(other.bpm), waveform_data(nullptr),  waveform_size(other.waveform_size)
 {
@@ -58,7 +58,6 @@ AudioTrack::AudioTrack(const AudioTrack& other) : title(other.title),artists(oth
 //operator = :  track1 = track2;
 // cleaning the first object, coping the data from the other object- deep copy
 AudioTrack& AudioTrack::operator=(const AudioTrack& other) {
-    
     #ifdef DEBUG
     std::cout << "AudioTrack copy assignment called for: " << other.title << std::endl;
     #endif

@@ -3,13 +3,15 @@
 #include <cmath>
 #include <algorithm>
 
+
+//constractor
 MP3Track::MP3Track(const std::string& title, const std::vector<std::string>& artists, 
                    int duration, int bpm, int bitrate, bool has_tags)
     : AudioTrack(title, artists, duration, bpm), bitrate(bitrate), has_id3_tags(has_tags) {
 
     std::cout << "MP3Track created: " << bitrate << " kbps" << std::endl;
 }
-
+//implementing load according to MP3
 void MP3Track::load() {
      std::cout << "[MP3Track::load] Loading MP3: \"" << title<< "\" at " << bitrate << " kbps...\n";
     if (has_id3_tags) {
@@ -23,7 +25,7 @@ void MP3Track::load() {
     // NOTE: Use exactly 2 spaces before the arrow (→) character
     
 }
-
+//implementing analyze_beatgrid according to MP3
 void MP3Track::analyze_beatgrid() {
      std::cout << "[MP3Track::analyze_beatgrid] Analyzing beat grid for: \"" << title << "\"\n";
      long long beats = (duration_seconds / 60.0) * bpm;
@@ -32,7 +34,7 @@ void MP3Track::analyze_beatgrid() {
     // NOTE: Use exactly 2 spaces before each arrow (→) character
 
 }
-
+//implementing get_quality_score according to MP3
 double MP3Track::get_quality_score() const {
     // NOTE: This method does NOT print anything
     double score = (bitrate / 320.0) * 100.0;  // Base score
@@ -45,7 +47,7 @@ double MP3Track::get_quality_score() const {
     if (score > 100.0) score = 100.0;
     return score;
 }
-
+//cloning by using the copy constractor to do  deep copy.
 PointerWrapper<AudioTrack> MP3Track::clone() const {
     MP3Track* newMP3 = new MP3Track(*this);
     return PointerWrapper<AudioTrack>(newMP3);

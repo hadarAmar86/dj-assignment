@@ -1,9 +1,10 @@
 #include "LRUCache.h"
 #include <iostream>
 
+// constractor
 LRUCache::LRUCache(size_t capacity)
     : slots(capacity), max_size(capacity), access_counter(0) {}
-
+//asks if the track is in the chache
 bool LRUCache::contains(const std::string& track_id) const {
     return findSlot(track_id) != max_size;
 }
@@ -17,6 +18,7 @@ AudioTrack* LRUCache::get(const std::string& track_id) {
 /**
  * TODO: Implement the put() method for LRUCache
  */
+//insert to cache
 bool LRUCache::put(PointerWrapper<AudioTrack> track) {
         if(!track){
             return false;
@@ -26,14 +28,16 @@ bool LRUCache::put(PointerWrapper<AudioTrack> track) {
         return false;
        }
        bool flag = false;
+       //evict room if neccessery
        if(isFull()){
             flag = evictLRU();
        }
       size_t s = findEmptySlot();
+      //clone the track and store it
        slots[s].store(track->clone(),++access_counter);
        return flag;
 }
-
+//evict room for a track
 bool LRUCache::evictLRU() {
     size_t lru = findLRUSlot();
     if (lru == max_size || !slots[lru].isOccupied()) return false;
@@ -52,7 +56,7 @@ void LRUCache::clear() {
         slot.clear();
     }
 }
-
+//display the cache
 void LRUCache::displayStatus() const {
     std::cout << "[LRUCache] Status: " << size() << "/" << max_size << " slots used\n";
     for (size_t i = 0; i < max_size; ++i) {
@@ -64,7 +68,7 @@ void LRUCache::displayStatus() const {
         }
     }
 }
-
+//finding a slot according to a tracks id
 size_t LRUCache::findSlot(const std::string& track_id) const {
     for (size_t i = 0; i < max_size; ++i) {
         if (slots[i].isOccupied() && slots[i].getTrack()->get_title() == track_id) return i;
@@ -76,6 +80,7 @@ size_t LRUCache::findSlot(const std::string& track_id) const {
 /**
  * TODO: Implement the findLRUSlot() method for LRUCache
  */
+//to find the slot that has been used the least (least recent accsess)
 size_t LRUCache::findLRUSlot() const {    
     size_t curr_index = max_size;
     uint64_t min_last_access = -1;
@@ -95,7 +100,7 @@ size_t LRUCache::findLRUSlot() const {
     }
     return curr_index;
 }
-
+//find an emnty slot
 size_t LRUCache::findEmptySlot() const {
     for (size_t i = 0; i < max_size; ++i) {
         if (!slots[i].isOccupied()) return i;
