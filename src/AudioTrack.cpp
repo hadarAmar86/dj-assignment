@@ -28,7 +28,7 @@ AudioTrack::AudioTrack(const std::string& title, const std::vector<std::string>&
     #endif
 }
 
-
+//destructor of AudioTrack, deletes the pointer to the array in order to prevent memory leaks
 AudioTrack::~AudioTrack() {
     #ifdef DEBUG
     std::cout << "AudioTrack destructor called for: " << title << std::endl;
@@ -36,16 +36,17 @@ AudioTrack::~AudioTrack() {
     delete[] waveform_data;
 }
 
+//
 AudioTrack::AudioTrack(const AudioTrack& other) : title(other.title),artists(other.artists),
       duration_seconds(other.duration_seconds), bpm(other.bpm), waveform_data(nullptr),  waveform_size(other.waveform_size)
 {
     if (other.waveform_data) { // check other.waveform_data is not NULL
-        waveform_data = new double[waveform_size];
+        waveform_data = new double[waveform_size]; // Allocate a new array -> Deep copy: create a new array to avoid pointing to the same memory
         for (size_t i = 0; i < waveform_size; ++i) {
-            waveform_data[i] = other.waveform_data[i];
+            waveform_data[i] = other.waveform_data[i];// coping the data
         }
     } else {
-        waveform_data = nullptr;
+        waveform_data = nullptr; 
     }
 
     #ifdef DEBUG
@@ -54,19 +55,22 @@ AudioTrack::AudioTrack(const AudioTrack& other) : title(other.title),artists(oth
 
     
 }
-
+//operator = :  track1 = track2;
+// cleaning the first object, coping the data from the other object- deep copy
 AudioTrack& AudioTrack::operator=(const AudioTrack& other) {
     
     #ifdef DEBUG
     std::cout << "AudioTrack copy assignment called for: " << other.title << std::endl;
     #endif
-    if (this == &other) return *this;
-    delete[] waveform_data;// deleting the data in order to prevent memory leak.
-    waveform_data = nullptr;
+    if (this == &other) return *this;// **preventing self coping (track1 = track1)
+    delete[] waveform_data;//prevent memory leaks
+    waveform_data = nullptr;//Reset pointer to avoid dangling pointer issues - pointing to a deleted address.
     copyFrom(other);
-    return *this;
+    return *this;// returning reference to the object
 }
 
+//move - steal resources, empting other, not doing deep copy (not new), if the object is heavy.
+// not alocating new memory. creating new object from rvalue
 AudioTrack::AudioTrack(AudioTrack&& other) noexcept : title(std::move(other.title)), artists(std::move(other.artists)),
       duration_seconds(other.duration_seconds), bpm(other.bpm), waveform_data(other.waveform_data), waveform_size(other.waveform_size)
 {
@@ -74,21 +78,24 @@ AudioTrack::AudioTrack(AudioTrack&& other) noexcept : title(std::move(other.titl
     std::cout << "AudioTrack move constructor called for: " << other.title << std::endl;
     #endif
     title = std::move(other.title);
-    other.waveform_data = nullptr;
+    other.waveform_data = nullptr;//Reset pointer to avoid dangling pointer issues
     other.waveform_size = 0;
 }
 
+//move assignment operator - like move constractor - stealing, but working on an object that was already in use, so doing delete
 AudioTrack& AudioTrack::operator=(AudioTrack&& other) noexcept {
 
     #ifdef DEBUG
     std::cout << "AudioTrack move assignment called for: " << other.title << std::endl;
     #endif
-   if (this == &other)
+   if (this == &other)//preventing self implemention
         return *this;
 
+    //deleting former data
     delete[] waveform_data;
     waveform_data = nullptr;
 
+    //moving data
     title = std::move(other.title);
     artists = std::move(other.artists);
     duration_seconds = other.duration_seconds;
@@ -99,10 +106,10 @@ AudioTrack& AudioTrack::operator=(AudioTrack&& other) noexcept {
     other.waveform_size = 0;
     other.duration_seconds = 0;
     other.bpm = 0;
-
+    //reterning reference
     return *this;
 }
-
+//deep copy
 void AudioTrack::copyFrom(const AudioTrack& other)
 {
     title = other.title;

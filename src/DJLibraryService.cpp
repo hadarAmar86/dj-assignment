@@ -21,7 +21,8 @@ DJLibraryService::~DJLibraryService() {
     }
     library.clear();
 }
-
+//getting trackinfo from file config, creating new copies of track according to their type (mp3/WAV), keeping pointers to them in the library.
+//DJ library is the logical owner of the created tracks
  void DJLibraryService::buildLibrary(const std::vector<SessionConfig::TrackInfo>& library_tracks) {
     int count = 0;
     for (auto& track : library_tracks) // prevent unecessary copies
@@ -32,7 +33,7 @@ DJLibraryService::~DJLibraryService() {
                                                 track.bpm,track.extra_param1,track.extra_param2);
             library.push_back(new_mp3_track);
             //std::cout << "MP3: MP3Track created: " << new_mp3_track->get_bitrate() << " kbps" << std::endl;
-            count+=1;
+            count+=1; //counting how many tracks are there. 
         }
         else
         {
@@ -53,6 +54,7 @@ DJLibraryService::~DJLibraryService() {
  * @brief Display the current state of the DJ library playlist
  * 
  */
+//printing the playlist at the library.
 void DJLibraryService::displayLibrary() const {
     std::cout << "=== DJ Library Playlist: " 
               << playlist.get_name() << " ===" << std::endl;
@@ -83,6 +85,7 @@ Playlist& DJLibraryService::getPlaylist() {
  * 
  * HINT: Leverage Playlist's find_track method
  */
+//finding a specific track
 AudioTrack* DJLibraryService::findTrack(const std::string& track_title) {
     AudioTrack* found_track = playlist.find_track(track_title);
     if (found_track)
@@ -91,13 +94,12 @@ AudioTrack* DJLibraryService::findTrack(const std::string& track_title) {
     }
     return nullptr;
 }
-
+//creating a new playlist from chosen tracks, load, analyze_beatgrid for each of them.
 void DJLibraryService::loadPlaylistFromIndices(const std::string& playlist_name, 
                                                const std::vector<int>& track_indices) {
     std::cout << "[INFO] Loading playlist: " << playlist_name << std::endl;
     int count = 0;
     playlist = Playlist(playlist_name);
-    //int real_index = 1;
     for (size_t index_track : track_indices)
     {
         if (index_track > 0 && index_track <= library.size())
@@ -125,6 +127,7 @@ void DJLibraryService::loadPlaylistFromIndices(const std::string& playlist_name,
  * TODO: Implement getTrackTitles method
  * @return Vector of track titles in the playlist
  */
+//creating a vector of the tracks inside the playlist
 std::vector<std::string> DJLibraryService::getTrackTitles() const {
     std::vector<std::string> plalist_title_tracks;
     std::vector<AudioTrack*> tracks = playlist.getTracks();

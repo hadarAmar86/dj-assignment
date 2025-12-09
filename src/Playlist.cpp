@@ -2,11 +2,13 @@
 #include "AudioTrack.h"
 #include <iostream>
 #include <algorithm>
+
+//constractor
 Playlist::Playlist(const std::string& name) 
     : head(nullptr), playlist_name(name), track_count(0) {
     std::cout << "Created playlist: " << name << std::endl;
 }
-
+//constractor
 Playlist::~Playlist() {
     #ifdef DEBUG
     std::cout << "Destroying playlist: " << playlist_name << std::endl;
@@ -23,7 +25,7 @@ Playlist::~Playlist() {
     track_count = 0;
 
 }
-
+//copy constrcator - deep copy
 Playlist::Playlist(const Playlist& other)
     : head(nullptr), playlist_name(other.get_name()), track_count(0)
 {
@@ -46,7 +48,7 @@ Playlist::Playlist(const Playlist& other)
     }
 }
 
-
+//adding a new track (by using a constractor)
 void Playlist::add_track(AudioTrack* track) {
     if (!track) {
         std::cout << "[ERROR] Cannot add null track to playlist" << std::endl;
@@ -65,7 +67,7 @@ void Playlist::add_track(AudioTrack* track) {
     //          << playlist_name << "'" << std::endl;
 
 }
-
+//removing a track
 void Playlist::remove_track(const std::string& title) {
     PlaylistNode* current = head;
     PlaylistNode* prev = nullptr;
@@ -83,6 +85,7 @@ void Playlist::remove_track(const std::string& title) {
         } else {
             head = current->next;
         }
+        //playlist is the owner of track - and therfor needs to delete it.
         delete current->track;
         delete current;
         track_count--;
@@ -93,6 +96,7 @@ void Playlist::remove_track(const std::string& title) {
     }
 }
 
+//printing playlist
 void Playlist::display() const {
     std::cout << "\n=== Playlist: " << playlist_name << " ===" << std::endl;
     std::cout << "Track count: " << track_count << std::endl;
@@ -125,7 +129,7 @@ void Playlist::display() const {
     }
     std::cout << "========================\n" << std::endl;
 }
-
+//finding a track using the title
 AudioTrack* Playlist::find_track(const std::string& title) const {
     PlaylistNode* current = head;
 
@@ -162,6 +166,8 @@ std::vector<AudioTrack*> Playlist::getTracks() const {
     return tracks;
 }
 
+//operator = :  Playlist = Playlist;
+// cleaning the first object, coping the data from the other object- deep copy
 Playlist& Playlist::operator=(const Playlist& other) {
     if (this == &other) {
         return *this; 
